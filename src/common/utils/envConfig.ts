@@ -13,4 +13,9 @@ export const env = cleanEnv(process.env, {
   CORS_ORIGIN: str({ devDefault: testOnly("http://localhost:3000") }),
   COMMON_RATE_LIMIT_MAX_REQUESTS: num({ devDefault: testOnly(1000) }),
   COMMON_RATE_LIMIT_WINDOW_MS: num({ devDefault: testOnly(1000) }),
+  DATABASE_URL: str({
+    devDefault: testOnly(
+      "postgresql://postgres.lrifsqrbwelltffuxftg:chanh013@@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
+    ),
+  }),
 });

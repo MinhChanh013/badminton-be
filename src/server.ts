@@ -4,11 +4,11 @@ import helmet from "helmet";
 import { pino } from "pino";
 
 import { openAPIRouter } from "@/api-docs/openAPIRouter";
-import { healthCheckRouter } from "@/api/healthCheck/healthCheckRouter";
-import { userRouter } from "@/api/user/userRouter";
 import errorHandler from "@/common/middleware/errorHandler";
 import requestLogger from "@/common/middleware/requestLogger";
 import { env } from "@/common/utils/envConfig";
+import { connectDatabase } from "./config/database";
+import { playerRouter } from "./api/payler/playerRouter";
 
 const logger = pino({ name: "server start" });
 const app: Express = express();
@@ -26,9 +26,11 @@ app.use(helmet());
 // Request logging
 app.use(requestLogger);
 
+// Connect to the database
+connectDatabase();
+
 // Routes
-app.use("/health-check", healthCheckRouter);
-app.use("/users", userRouter);
+app.use("/players", playerRouter);
 
 // Swagger UI
 app.use(openAPIRouter);
