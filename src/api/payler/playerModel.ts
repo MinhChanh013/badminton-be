@@ -2,9 +2,8 @@ import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
 import { z } from "zod";
 
 import { commonValidations } from "@/common/utils/commonValidation";
-import { sequelize } from "@/config/database";
 import { zodToSequelizeAttributes } from "@/common/utils/defineConvert";
-import { Model } from "sequelize";
+import { sequelize } from "@/config/database";
 
 extendZodWithOpenApi(z);
 

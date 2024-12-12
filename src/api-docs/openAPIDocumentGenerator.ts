@@ -3,10 +3,11 @@ import {
   OpenApiGeneratorV3,
 } from "@asteasolutions/zod-to-openapi";
 
+import { authRegistry } from "@/api/auth/authRouter";
 import { playerRegistry } from "@/api/payler/playerRouter";
 
 export function generateOpenAPIDocument() {
-  const registry = new OpenAPIRegistry([playerRegistry]);
+  const registry = new OpenAPIRegistry([authRegistry, playerRegistry]);
   const generator = new OpenApiGeneratorV3(registry.definitions);
 
   // Tạo tài liệu cơ bản
@@ -20,6 +21,11 @@ export function generateOpenAPIDocument() {
       description: "View the raw OpenAPI Specification in JSON format",
       url: "/swagger.json",
     },
+    security: [
+      {
+        BearerAuth: [],
+      },
+    ],
   });
 
   document.components = {
@@ -31,11 +37,6 @@ export function generateOpenAPIDocument() {
       },
     },
   };
-  document.security = [
-    {
-      BearerAuth: [],
-    },
-  ];
 
   return document;
 }

@@ -18,4 +18,13 @@ export const env = cleanEnv(process.env, {
       "postgresql://postgres.lrifsqrbwelltffuxftg:chanh013@@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
     ),
   }),
+  JWT_SECRET: str({
+    devDefault: testOnly("secret"),
+  }),
+  JWT_EXPIRATION: str({
+    devDefault: testOnly("1d"),
+  }),
+  JWT_REFRESH_TOKEN_EXPIRATION: str({
+    devDefault: testOnly("7d"),
+  }),
 });

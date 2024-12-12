@@ -31,3 +31,28 @@ export const zodToSequelizeAttributes = (
 function camelToSnakeCase(str: string): string {
   return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
 }
+
+export const convertEnviromentToTime = (jwtExpiration: string): number => {
+  const match = jwtExpiration.match(/(\d+)([dhms])/) ?? "";
+  const value = parseInt(match[1], 10);
+  const unit = match[2];
+
+  let milliseconds;
+  switch (unit) {
+    case "d":
+      milliseconds = value * 24 * 60 * 60 * 1000;
+      break;
+    case "h":
+      milliseconds = value * 60 * 60 * 1000;
+      break;
+    case "m":
+      milliseconds = value * 60 * 1000;
+      break;
+    case "s":
+      milliseconds = value * 1000;
+      break;
+    default:
+      throw new Error("Đơn vị không hợp lệ");
+  }
+  return milliseconds;
+};
