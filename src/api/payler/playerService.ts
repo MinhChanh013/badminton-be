@@ -3,14 +3,8 @@ import { StatusCodes } from "http-status-codes";
 import { ServiceResponse } from "@/common/models/serviceResponse";
 import { logger } from "@/server";
 import { z } from "zod";
-import {
-  CreatePlayerSchema,
-  Player,
-  PlayerModel,
-  UpdatePlayerSchema,
-} from "./playerModel";
+import { CreatePlayerSchema, Player, UpdatePlayerSchema } from "./playerModel";
 import { PlayerRepository } from "./playerRepository";
-import { Op } from "sequelize";
 
 export class PlayerService {
   private playerRepository: PlayerRepository;
@@ -135,6 +129,25 @@ export class PlayerService {
         null,
         StatusCodes.INTERNAL_SERVER_ERROR
       );
+    }
+  }
+
+  async delete(id: number): Promise<ServiceResponse<boolean>> {
+    try {
+      const player = await this.findById(id);
+      if (player.success) {
+        await this.playerRepository.deleteAsync(id);
+        return ServiceResponse.success<boolean>("Player deleted", true);
+      } else {
+        return ServiceResponse.failure(
+          "Player with id not found",
+          false,
+          StatusCodes.CONFLICT
+        );
+      }
+    } catch (error) {
+      console.error("Error deleting player:", error);
+      throw new Error("Failed to delete player");
     }
   }
 }

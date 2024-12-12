@@ -11,6 +11,7 @@ import {
   PlayerSchema,
   UpdatePlayerSchema,
 } from "./playerModel";
+import { authMiddleware } from "@/common/middleware/authMiddleware";
 
 export const playerRegistry = new OpenAPIRegistry();
 export const playerRouter: Router = express.Router();
@@ -24,7 +25,7 @@ playerRegistry.registerPath({
   responses: createApiResponse(z.array(PlayerSchema), "Success"),
 });
 
-playerRouter.get("/", playerController.getPlayers);
+playerRouter.get("/", authMiddleware, playerController.getPlayers);
 
 playerRegistry.registerPath({
   method: "get",
@@ -36,6 +37,7 @@ playerRegistry.registerPath({
 
 playerRouter.get(
   "/:id",
+  authMiddleware,
   validateRequest(GetPlayerSchema),
   playerController.getPlayer
 );
@@ -52,6 +54,7 @@ playerRegistry.registerPath({
 
 playerRouter.post(
   "/",
+  authMiddleware,
   validateRequest(CreatePlayerSchema, true),
   playerController.createPlayer
 );
@@ -72,4 +75,20 @@ playerRouter.put(
   validateRequest(GetPlayerSchema),
   validateRequest(UpdatePlayerSchema, true),
   playerController.updatePlayer
+);
+
+playerRegistry.registerPath({
+  method: "delete",
+  path: "/players/{id}",
+  tags: ["Player"],
+  request: {
+    params: GetPlayerSchema.shape.params,
+  },
+  responses: createApiResponse(z.object({}), "Success"),
+});
+
+playerRouter.delete(
+  "/:id",
+  validateRequest(GetPlayerSchema),
+  playerController.deletePlayer
 );

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import crypto from "crypto";
 import {
   CreatePlayerSchema,
   Player,
@@ -67,6 +68,10 @@ export class PlayerRepository {
     player: z.infer<typeof CreatePlayerSchema.shape.body>
   ): Promise<Player> {
     try {
+      player.password = crypto
+        .createHash("md5")
+        .update(player.password)
+        .digest("hex");
       const newPlayer = await PlayerModel.create(player);
       return newPlayer.get({ plain: true }) as Player;
     } catch (error) {
@@ -80,13 +85,31 @@ export class PlayerRepository {
     player: z.infer<typeof UpdatePlayerSchema.shape.body>
   ): Promise<boolean> {
     try {
-      const newPlayer = await PlayerModel.update(player, {
+      if (player.password) {
+        player.password = crypto
+          .createHash("md5")
+          .update(player.password)
+          .digest("hex");
+      }
+      await PlayerModel.update(player, {
         where: { id },
       });
       return true;
     } catch (error) {
       console.error("Error creating player:", error);
       throw new Error("Failed to create player");
+    }
+  }
+
+  async deleteAsync(id: number): Promise<boolean> {
+    try {
+      await PlayerModel.destroy({
+        where: { id },
+      });
+      return true;
+    } catch (error) {
+      console.error("Error deleting player:", error);
+      throw new Error("Failed to delete player");
     }
   }
 }

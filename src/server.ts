@@ -9,6 +9,7 @@ import requestLogger from "@/common/middleware/requestLogger";
 import { env } from "@/common/utils/envConfig";
 import { connectDatabase } from "./config/database";
 import { playerRouter } from "./api/payler/playerRouter";
+import { authRouter } from "./api/auth/authRouter";
 
 const logger = pino({ name: "server start" });
 const app: Express = express();
@@ -30,6 +31,7 @@ app.use(requestLogger);
 connectDatabase();
 
 // Routes
+app.use("/auth", authRouter);
 app.use("/players", playerRouter);
 
 // Swagger UI
