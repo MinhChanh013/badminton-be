@@ -12,6 +12,7 @@ import { playerRouter } from "./api/payler/playerRouter";
 import { authRouter } from "./api/auth/authRouter";
 import { courtRouter } from "./api/court/courtRouter";
 import { discountRouter } from "./api/discount/discountRouter";
+import { expensesRouter } from "./api/expenses/expensesRouter";
 
 const logger = pino({ name: "server start" });
 const app: Express = express();
@@ -37,6 +38,7 @@ app.use("/auth", authRouter);
 app.use("/players", playerRouter);
 app.use("/courts", courtRouter);
 app.use("/discounts", discountRouter);
+app.use("/expenses", expensesRouter);
 
 // Swagger UI
 app.use(openAPIRouter);
