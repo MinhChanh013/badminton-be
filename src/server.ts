@@ -11,6 +11,7 @@ import { connectDatabase } from "./config/database";
 import { playerRouter } from "./api/payler/playerRouter";
 import { authRouter } from "./api/auth/authRouter";
 import { courtRouter } from "./api/court/courtRouter";
+import { discountRouter } from "./api/discount/discountRouter";
 
 const logger = pino({ name: "server start" });
 const app: Express = express();
@@ -35,6 +36,7 @@ connectDatabase();
 app.use("/auth", authRouter);
 app.use("/players", playerRouter);
 app.use("/courts", courtRouter);
+app.use("/discounts", discountRouter);
 
 // Swagger UI
 app.use(openAPIRouter);
