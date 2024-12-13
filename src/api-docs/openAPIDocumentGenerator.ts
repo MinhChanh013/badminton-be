@@ -8,6 +8,10 @@ import { playerRegistry } from "@/api/payler/playerRouter";
 import { courtRegistry } from "@/api/court/courtRouter";
 import { discountRegistry } from "@/api/discount/discountRouter";
 import { expensesRegistry } from "@/api/expenses/expensesRouter";
+import { sessionRegistry } from "@/api/session/sessionRouter";
+import { sessionPlayerRegistry } from "@/api/session-player/sessionPlayerRouter";
+import { sessionExpensesRegistry } from "@/api/session-expenses/sessionExpensesRouter";
+import { sessionDiscountRegistry } from "@/api/session-discount/sessionDiscountRouter";
 
 export function generateOpenAPIDocument() {
   const registry = new OpenAPIRegistry([
@@ -16,6 +20,10 @@ export function generateOpenAPIDocument() {
     courtRegistry,
     discountRegistry,
     expensesRegistry,
+    sessionRegistry,
+    sessionPlayerRegistry,
+    sessionExpensesRegistry,
+    sessionDiscountRegistry,
   ]);
   const generator = new OpenApiGeneratorV3(registry.definitions);
 
