@@ -6,12 +6,14 @@ import {
 import { authRegistry } from "@/api/auth/authRouter";
 import { playerRegistry } from "@/api/payler/playerRouter";
 import { courtRegistry } from "@/api/court/courtRouter";
+import { discountRegistry } from "@/api/discount/discountRouter";
 
 export function generateOpenAPIDocument() {
   const registry = new OpenAPIRegistry([
     authRegistry,
     playerRegistry,
     courtRegistry,
+    discountRegistry,
   ]);
   const generator = new OpenApiGeneratorV3(registry.definitions);
 
