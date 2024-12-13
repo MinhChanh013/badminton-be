@@ -17,7 +17,7 @@ export class PlayerService {
   async findAll(): Promise<ServiceResponse<Player[] | null>> {
     try {
       const players = await this.playerRepository.findAllAsync();
-      if (!players || players.length === 0) {
+      if (!players) {
         return ServiceResponse.failure(
           "No Players found",
           null,
