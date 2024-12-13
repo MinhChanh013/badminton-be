@@ -7,6 +7,7 @@ import { authRegistry } from "@/api/auth/authRouter";
 import { playerRegistry } from "@/api/payler/playerRouter";
 import { courtRegistry } from "@/api/court/courtRouter";
 import { discountRegistry } from "@/api/discount/discountRouter";
+import { expensesRegistry } from "@/api/expenses/expensesRouter";
 
 export function generateOpenAPIDocument() {
   const registry = new OpenAPIRegistry([
@@ -14,6 +15,7 @@ export function generateOpenAPIDocument() {
     playerRegistry,
     courtRegistry,
     discountRegistry,
+    expensesRegistry,
   ]);
   const generator = new OpenApiGeneratorV3(registry.definitions);
 
