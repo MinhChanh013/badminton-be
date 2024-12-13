@@ -15,7 +15,14 @@ export const zodToSequelizeAttributes = (
     if (zodType instanceof z.ZodString) {
       attributes[key] = { type: DataTypes.STRING, field: columnName };
     } else if (zodType instanceof z.ZodNumber) {
-      attributes[key] = { type: DataTypes.INTEGER, field: columnName };
+      attributes[key] = {
+        type: DataTypes.NUMBER,
+        field: columnName,
+        get() {
+          const value = this.getDataValue(key);
+          return value !== null ? Number(value) : null; // Chuyển sang kiểu number
+        },
+      };
     } else if (zodType instanceof z.ZodDate) {
       attributes[key] = { type: DataTypes.DATE, field: columnName };
     } else if (zodType instanceof z.ZodBoolean) {

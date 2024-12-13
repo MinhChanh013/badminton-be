@@ -5,9 +5,14 @@ import {
 
 import { authRegistry } from "@/api/auth/authRouter";
 import { playerRegistry } from "@/api/payler/playerRouter";
+import { courtRegistry } from "@/api/court/courtRouter";
 
 export function generateOpenAPIDocument() {
-  const registry = new OpenAPIRegistry([authRegistry, playerRegistry]);
+  const registry = new OpenAPIRegistry([
+    authRegistry,
+    playerRegistry,
+    courtRegistry,
+  ]);
   const generator = new OpenApiGeneratorV3(registry.definitions);
 
   // Tạo tài liệu cơ bản
