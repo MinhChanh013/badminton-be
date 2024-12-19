@@ -26,9 +26,10 @@ export const GetSessionExpensesSchema = z.object({
 export const CreateSessionExpensesSchema = z.object({
   body: SessionExpensesSchema.omit({
     id: true,
-    playerId: true,
     createdAt: true,
     updatedAt: true,
+  }).partial({
+    playerId: true,
   }),
 });
 

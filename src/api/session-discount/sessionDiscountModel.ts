@@ -26,10 +26,11 @@ export const GetSessionDiscountSchema = z.object({
 export const CreateSessionDiscountSchema = z.object({
   body: SessionDiscountSchema.omit({
     id: true,
-    playerId: true,
-    percent: true,
     createdAt: true,
     updatedAt: true,
+  }).partial({
+    playerId: true,
+    percent: true,
   }),
 });
 

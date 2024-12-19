@@ -9,14 +9,20 @@ import {
   UpdateSessionPlayerSchema,
 } from "./sessionPlayerModel";
 import { SessionPlayerRepository } from "./sessionPlayerRepository";
+import { PlayerRepository } from "../payler/playerRepository";
+import { SessionRepository } from "../session/sessionRepository";
 
 export class SessionPlayerService {
   private sessionPlayerRepository: SessionPlayerRepository;
+  private playerRepository: PlayerRepository;
+  private sessionRepository: SessionRepository;
 
   constructor(
     repository: SessionPlayerRepository = new SessionPlayerRepository()
   ) {
     this.sessionPlayerRepository = repository;
+    this.playerRepository = new PlayerRepository();
+    this.sessionRepository = new SessionRepository();
   }
 
   // Retrieves all users from the database
@@ -81,6 +87,39 @@ export class SessionPlayerService {
     body: z.infer<typeof CreateSessionPlayerSchema.shape.body>
   ): Promise<ServiceResponse<SessionPlayer | null>> {
     try {
+      // check player_id is exist in db
+      const [player, session, playerInSession] = await Promise.all([
+        this.playerRepository.findByIdAsync(body.playerId),
+        this.sessionRepository.findByIdAsync(body.sessionId),
+        this.sessionPlayerRepository.getUserExistSessionAsync(
+          body.playerId,
+          body.sessionId
+        ),
+      ]);
+      if (!player) {
+        return ServiceResponse.failure(
+          "Player with id not found",
+          null,
+          StatusCodes.CONFLICT
+        );
+      }
+
+      if (!session) {
+        return ServiceResponse.failure(
+          "Session with id not found",
+          null,
+          StatusCodes.CONFLICT
+        );
+      }
+
+      if (playerInSession) {
+        return ServiceResponse.failure(
+          "Player already exist in session",
+          null,
+          StatusCodes.CONFLICT
+        );
+      }
+
       const sessionPlayer = await this.sessionPlayerRepository.createAsync(
         body
       );

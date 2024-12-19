@@ -9,14 +9,23 @@ import {
   UpdateSessionExpensesSchema,
 } from "./sessionExpensesModel";
 import { SessionExpensesRepository } from "./sessionExpensesRepository";
+import { PlayerRepository } from "../payler/playerRepository";
+import { ExpensesRepository } from "../expenses/expensesRepository";
+import { SessionRepository } from "../session/sessionRepository";
 
 export class SessionExpensesService {
   private sessionExpensesRepository: SessionExpensesRepository;
+  private playerRepository: PlayerRepository;
+  private expensesRepository: ExpensesRepository;
+  private sessionRepository: SessionRepository;
 
   constructor(
     repository: SessionExpensesRepository = new SessionExpensesRepository()
   ) {
     this.sessionExpensesRepository = repository;
+    this.playerRepository = new PlayerRepository();
+    this.expensesRepository = new ExpensesRepository();
+    this.sessionRepository = new SessionRepository();
   }
 
   // Retrieves all users from the database
@@ -81,6 +90,36 @@ export class SessionExpensesService {
     body: z.infer<typeof CreateSessionExpensesSchema.shape.body>
   ): Promise<ServiceResponse<SessionExpenses | null>> {
     try {
+      if (typeof body.playerId === "number" || body.playerId) {
+        const player = await this.playerRepository.findByIdAsync(body.playerId);
+        if (!player) {
+          return ServiceResponse.failure(
+            "Player not found",
+            null,
+            StatusCodes.NOT_FOUND
+          );
+        }
+      }
+      // check session exist in db with phone_number or username
+      const [expenses, sessiuion] = await Promise.all([
+        this.expensesRepository.findByIdAsync(body.expensesId),
+        this.sessionRepository.findByIdAsync(body.sessionId),
+      ]);
+      if (!expenses) {
+        return ServiceResponse.failure(
+          "Expenses not found",
+          null,
+          StatusCodes.NOT_FOUND
+        );
+      }
+      if (!sessiuion) {
+        return ServiceResponse.failure(
+          "Session not found",
+          null,
+          StatusCodes.NOT_FOUND
+        );
+      }
+
       const sessionExpenses = await this.sessionExpensesRepository.createAsync(
         body
       );

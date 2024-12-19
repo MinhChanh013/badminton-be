@@ -73,4 +73,18 @@ export class SessionPlayerRepository {
       throw new Error("Failed to delete session player");
     }
   }
+
+  async getUserExistSessionAsync(idUser: number, idSession: number) {
+    try {
+      const sessionPlayer = await SessionPlayerModel.findOne({
+        where: { playerId: idUser, sessionId: idSession },
+      });
+      return sessionPlayer
+        ? (sessionPlayer.get({ plain: true }) as SessionPlayer)
+        : null;
+    } catch (error) {
+      console.error("Error get session player:", error);
+      throw new Error("Failed to get session player");
+    }
+  }
 }
