@@ -1,6 +1,6 @@
 import { z } from "zod";
 import {
-  CreateSessionSchema,
+  CreateItemSessionSchema,
   Session,
   SessionModel,
   UpdateSessionSchema,
@@ -32,7 +32,7 @@ export class SessionRepository {
   }
 
   async createAsync(
-    session: z.infer<typeof CreateSessionSchema.shape.body>
+    session: z.infer<typeof CreateItemSessionSchema>
   ): Promise<Session> {
     try {
       const newSession = await SessionModel.create(session);

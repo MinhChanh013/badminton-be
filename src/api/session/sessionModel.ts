@@ -23,12 +23,77 @@ export const GetSessionSchema = z.object({
   params: z.object({ id: commonValidations.id }),
 });
 
+const CreateListPlayerSchema = z.object({
+  id: z.number(),
+  playerId: z.number(),
+  totalAmount: z.number(),
+  startTime: z.string().datetime(),
+  endTime: z.string().datetime(),
+  isPayment: z.boolean(),
+});
+
+const CreateListDiscountSchema = z.object({
+  id: z.number(),
+  playerId: z.number().optional(),
+  discountId: z.number(),
+  totalAmount: z.number(),
+});
+
+const CreateListExpensesSchema = z.object({
+  id: z.number(),
+  playerId: z.number().optional(),
+  expensesId: z.number(),
+  amountTotal: z.number(),
+  quantity: z.number(),
+});
+
+export const CreateItemSessionSchema = SessionSchema.omit({
+  createdAt: true,
+  updatedAt: true,
+  id: true,
+});
+
 export const CreateSessionSchema = z.object({
-  body: SessionSchema.omit({
-    id: true,
-    createdAt: true,
-    updatedAt: true,
-  }),
+  body: z.array(
+    CreateItemSessionSchema.merge(
+      z.object({
+        players: z.array(CreateListPlayerSchema.omit({ id: true })),
+      })
+    )
+      .merge(
+        z.object({
+          discounts: z.array(CreateListDiscountSchema.omit({ id: true })),
+        })
+      )
+      .merge(
+        z.object({
+          expenses: z.array(CreateListExpensesSchema.omit({ id: true })),
+        })
+      )
+  ),
+});
+
+export const ReponseCreateSessionSchema = z.object({
+  body: z.array(
+    z
+      .object({ id: z.number() })
+      .merge(CreateItemSessionSchema)
+      .merge(
+        z.object({
+          players: z.array(CreateListPlayerSchema),
+        })
+      )
+      .merge(
+        z.object({
+          discounts: z.array(CreateListDiscountSchema),
+        })
+      )
+      .merge(
+        z.object({
+          expenses: z.array(CreateListExpensesSchema),
+        })
+      )
+  ),
 });
 
 export const UpdateSessionSchema = z.object({

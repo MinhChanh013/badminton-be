@@ -12,6 +12,7 @@ import {
   SessionSchema,
   GetSessionSchema,
   UpdateSessionSchema,
+  ReponseCreateSessionSchema,
 } from "./sessionModel";
 
 export const sessionRegistry = new OpenAPIRegistry();
@@ -50,7 +51,7 @@ sessionRegistry.registerPath({
   request: {
     body: jsonRquestBody(CreateSessionSchema.shape.body),
   },
-  responses: createApiResponse(SessionSchema, "Success"),
+  responses: createApiResponse(ReponseCreateSessionSchema, "Success"),
 });
 
 sessionRouter.post(

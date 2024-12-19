@@ -9,14 +9,23 @@ import {
   UpdateSessionDiscountSchema,
 } from "./sessionDiscountModel";
 import { SessionDiscountRepository } from "./sessionDiscountRepository";
+import { DiscountRepository } from "../discount/discountRepository";
+import { PlayerRepository } from "../payler/playerRepository";
+import { SessionRepository } from "../session/sessionRepository";
 
 export class SessionDiscountService {
   private sessionDiscountRepository: SessionDiscountRepository;
+  private discountRepository: DiscountRepository;
+  private playerRepository: PlayerRepository;
+  private sessionRepository: SessionRepository;
 
   constructor(
     repository: SessionDiscountRepository = new SessionDiscountRepository()
   ) {
     this.sessionDiscountRepository = repository;
+    this.discountRepository = new DiscountRepository();
+    this.playerRepository = new PlayerRepository();
+    this.sessionRepository = new SessionRepository();
   }
 
   // Retrieves all users from the database
@@ -81,6 +90,35 @@ export class SessionDiscountService {
     body: z.infer<typeof CreateSessionDiscountSchema.shape.body>
   ): Promise<ServiceResponse<SessionDiscount | null>> {
     try {
+      if (typeof body.playerId === "number" || body.playerId) {
+        const player = await this.playerRepository.findByIdAsync(body.playerId);
+        if (!player) {
+          return ServiceResponse.failure(
+            "Player not found",
+            null,
+            StatusCodes.NOT_FOUND
+          );
+        }
+      }
+      const [discount, session] = await Promise.all([
+        this.discountRepository.findByIdAsync(body.discountId),
+        this.sessionRepository.findByIdAsync(body.sessionId),
+      ]);
+      if (!discount) {
+        return ServiceResponse.failure(
+          "Discount not found",
+          null,
+          StatusCodes.NOT_FOUND
+        );
+      }
+      if (!session) {
+        return ServiceResponse.failure(
+          "Session not found",
+          null,
+          StatusCodes.NOT_FOUND
+        );
+      }
+
       const sessionDiscount = await this.sessionDiscountRepository.createAsync(
         body
       );
