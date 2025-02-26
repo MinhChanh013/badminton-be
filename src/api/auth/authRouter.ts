@@ -3,6 +3,7 @@ import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import express, { type Router } from "express";
 import {
   AuthSchema,
+  FortgotPasswordSchema,
   LoginSchema,
   logoutSchema,
   refreshTokenSchema,
@@ -56,5 +57,20 @@ authRegistry.registerPath({
 authRouter.post(
   "/refresh-token",
   validateRequest(refreshTokenSchema, true),
+  authController.refreshToken
+);
+
+authRegistry.registerPath({
+  method: "post",
+  path: "/auth/forgot-password",
+  tags: ["Auth"],
+  request: {
+    body: jsonRquestBody(FortgotPasswordSchema.shape.body),
+  },
+  responses: createApiResponse(z.boolean(), "Success"),
+});
+authRouter.post(
+  "/forgot-password",
+  validateRequest(FortgotPasswordSchema, true),
   authController.refreshToken
 );

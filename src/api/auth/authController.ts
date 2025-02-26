@@ -21,6 +21,14 @@ class AuthController {
     const serviceResponse = await playerService.refreshToken(req.body);
     return handleServiceResponse(serviceResponse, res);
   };
+
+  public forgotPassword: RequestHandler = async (
+    req: Request,
+    res: Response
+  ) => {
+    const serviceResponse = await playerService.forgotPassword(req.body);
+    return handleServiceResponse(serviceResponse, res);
+  };
 }
 
 export const authController = new AuthController();

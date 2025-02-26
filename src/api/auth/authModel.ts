@@ -55,6 +55,13 @@ export const CreateRefreshToken = RefreshTokenSchema.omit({
   updatedAt: true,
 });
 
+export const FortgotPasswordSchema = z.object({
+  body: z.object({
+    phoneNumber: z.string().max(20),
+    otp: z.string().max(6),
+  }),
+});
+
 const refreshTokenSequelizeAttributes = zodToSequelizeAttributes(
   RefreshTokenSchema.omit({ id: true })
 );

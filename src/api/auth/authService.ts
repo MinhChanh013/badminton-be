@@ -5,11 +5,13 @@ import { logger } from "@/server";
 import { z } from "zod";
 import {
   Auth,
+  FortgotPasswordSchema,
   LoginSchema,
   logoutSchema,
   refreshTokenSchema,
 } from "./authModel";
 import { AuthRepository } from "./authRepository";
+import admin from "@/common/services/firebase-admin";
 
 export class PlayerService {
   private authRepository: AuthRepository;
@@ -111,6 +113,41 @@ export class PlayerService {
       logger.error(errorMessage);
       return ServiceResponse.failure(
         "An error occurred while retrieving auth.",
+        null,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  async forgotPassword(
+    body: z.infer<typeof FortgotPasswordSchema.shape.body>
+  ): Promise<ServiceResponse<boolean | null>> {
+    try {
+      const { phoneNumber, otp } = body;
+
+      if (!phoneNumber || !otp) {
+        return ServiceResponse.failure(
+          "Phone number and otp is required",
+          null,
+          StatusCodes.BAD_REQUEST
+        );
+      }
+      const decodedToken = await admin.auth().verifyIdToken(otp);
+
+      if (decodedToken.phone_number === phoneNumber) {
+        return ServiceResponse.success<boolean>("OTP is valid", true);
+      } else {
+        return ServiceResponse.failure(
+          "OTP is invalid",
+          null,
+          StatusCodes.BAD_REQUEST
+        );
+      }
+    } catch (ex) {
+      const errorMessage = `Error reset password: $${(ex as Error).message}`;
+      logger.error(errorMessage);
+      return ServiceResponse.failure(
+        "An error occurred while reset password.",
         null,
         StatusCodes.INTERNAL_SERVER_ERROR
       );
